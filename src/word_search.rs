@@ -33,16 +33,16 @@ pub fn search_words_iterative(word_search: &WordSearch, words: &Vec<&str>) -> Wo
 
 fn search_for_word_iterative(word_search: &WordSearch, word: &str, row_index: usize, col_index: usize) -> bool {
     // this abstraction may be a bit inaccessible for people just begining to learn algorithms! how can I make it simpler?
-    let directions: Vec<(i32, i32)> = vec![(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)];
-    let mut row_iter: i32 = row_index as i32;
-    let mut col_iter: i32 = col_index as i32;
+    let directions: Vec<(usize, usize)> = vec![(1,1),(0, 1), (1, 0), (1, 1)];
+    let mut row_iter = row_index;
+    let mut col_iter = col_index;
     for direction in directions {
         let mut word_match = true;
         for character in word.chars() {
             // TODO is there a more elegant way to do the iteration than all this i32 <-> usize casting?
-            if row_iter < 0 || row_iter as usize >= word_search.len() ||
-               col_iter < 0 || col_iter as usize >= word_search.len() ||
-               word_search[row_iter as usize][col_iter as usize] != character {
+            if row_iter >= word_search.len() ||
+               col_iter >= word_search.len() ||
+               word_search[row_iter][col_iter] != character {
                 word_match = false;
                 break;
             }
