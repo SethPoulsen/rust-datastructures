@@ -3,7 +3,7 @@ use std::vec::Vec;
 type WordSearch = Vec<Vec<char>>;
 type WordSearchAnswers = Vec<Option<(usize, usize)>>;
 
-pub fn search_words_iterative(word_search: &WordSearch, words: &Vec<&str>) -> WordSearchAnswers {
+pub fn search_for_words(word_search: &WordSearch, words: &Vec<&str>) -> WordSearchAnswers {
     let mut answers: WordSearchAnswers = Vec::new();
     for word in words {
         let mut answer = None;
@@ -33,13 +33,12 @@ pub fn search_words_iterative(word_search: &WordSearch, words: &Vec<&str>) -> Wo
 
 fn search_for_word_iterative(word_search: &WordSearch, word: &str, row_index: usize, col_index: usize) -> bool {
     // this abstraction may be a bit inaccessible for people just begining to learn algorithms! how can I make it simpler?
-    let directions: Vec<(usize, usize)> = vec![(1,1),(0, 1), (1, 0), (1, 1)];
-    let mut row_iter = row_index;
-    let mut col_iter = col_index;
+    let directions: Vec<(usize, usize)> = vec![(0, 1), (1, 0), (1, 1)];
     for direction in directions {
         let mut word_match = true;
+        let mut row_iter = row_index;
+        let mut col_iter = col_index;
         for character in word.chars() {
-            // TODO is there a more elegant way to do the iteration than all this i32 <-> usize casting?
             if row_iter >= word_search.len() ||
                col_iter >= word_search.len() ||
                word_search[row_iter][col_iter] != character {
@@ -57,15 +56,9 @@ fn search_for_word_iterative(word_search: &WordSearch, word: &str, row_index: us
     false
 }
 
-pub fn search_words_recursive(word_search: &WordSearch, words: &Vec<&str>) -> WordSearchAnswers {
-    unimplemented!()
-}
-
 #[cfg(test)]
 mod test {
-    // use super::WordSearch;
-    use super::search_words_iterative;
-    use super::search_words_recursive;
+    use super::search_for_words;
 
     #[test]
     fn basics() {
@@ -78,13 +71,31 @@ mod test {
         let small_ws_solution = vec![Some((0, 0)), Some((1, 2)), Some((0, 1)), None];
 
         assert_eq!(
-            search_words_iterative(&small_ws, &small_ws_words),
+            search_for_words(&small_ws, &small_ws_words),
             small_ws_solution
         );
 
+        let big_ws = vec![
+            vec!['o', 'o', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a'],
+            vec!['w', 'a', 'w', 'a', 'a', 'a', 'a', 'a', 't', 'a'],
+            vec!['n', 'a', 'a', 'n', 'a', 'a', 'a', 'a', 'h', 'a'],
+            vec!['e', 'a', 'a', 'a', 'e', 'a', 'a', 'a', 'r', 'a'],
+            vec!['r', 'm', 'e', 'm', 'o', 'r', 'y', 'a', 'e', 'a'],
+            vec!['a', 'a', 'a', 'a', 'a', 'a', 's', 'a', 'a', 'a'],
+            vec!['a', 'a', 'a', 'a', 'a', 'a', 'a', 'h', 'd', 'a'],
+            vec!['a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'i', 'a'],
+            vec!['a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'n', 'p'],
+            vec!['a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'g', 'a'],
+            vec!['a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a'],
+            vec!['a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a']
+        ];
+        let big_ws_words = vec!["ownership", "memory", "threading"];
+        let big_ws_solution = vec![Some((0, 1)), Some((4, 1)), Some((1, 8))];
+
         assert_eq!(
-            search_words_recursive(&small_ws, &small_ws_words),
-            small_ws_solution
+            search_for_words(&big_ws, &big_ws_words),
+            big_ws_solution
         );
+
     }
 }
