@@ -31,5 +31,6 @@ mod test {
         assert_eq!(fac_recursive(1), 1);
         assert_eq!(fac_recursive(5), 120);
         assert_eq!(fac_recursive(10), 3628800);
+
     }
 }
