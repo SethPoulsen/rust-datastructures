@@ -1,0 +1,13 @@
+Data Structures: 
+-make the linked list generic
+-hash table?
+-binary search tree
+-make a linked list implement a few different traits (stack, queue, etc)
+-graph? 
+
+
+Algorithms:
+-Breadth first Search 
+-Depth first seach 
+-maze (recursive and iterative?)
+-something basic using the tree? 
