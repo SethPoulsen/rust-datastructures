@@ -1,9 +1,9 @@
 Data Structures: 
--make the linked list generic
 -hash table?
 -binary search tree
 -make a linked list implement a few different traits (stack, queue, etc)
 -graph? 
+-set
 
 
 Algorithms:

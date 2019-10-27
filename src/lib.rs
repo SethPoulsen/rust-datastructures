@@ -6,3 +6,4 @@ mod tests {
 pub mod stack;
 pub mod recursion;
 pub mod word_search;
+pub mod bst;
