@@ -7,3 +7,4 @@ pub mod stack;
 pub mod recursion;
 pub mod word_search;
 pub mod bst;
+pub mod list;
