@@ -36,14 +36,14 @@ impl <T> List<T> {
         }
     }
 
-    pub fn peek(&mut self) -> Option<&T> {
+    pub fn peek(&self) -> Option<&T> {
         match &self.head {
             None => None,
             Some(x) => Some(&x.elem)
         }
     }
 
-    pub fn size(&mut self) -> i32 {
+    pub fn size(&self) -> i32 {
         self.size
     }
 }

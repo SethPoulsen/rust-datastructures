@@ -1,58 +1,33 @@
 use std::mem;
 
-pub struct List<T> {
-    head: Option<Box<Node<T>>>,
-    size: i32,
-}
-
-pub enum Node<T> {
-    Leaf(T), 
-    Branch(T, Box<Node<T>>),
+// #[derive(Copy, Clone)] // more advanced, maybe for starters just copy it?
+pub enum List<T> {
+    Nothing, 
+    Cons(Box<T>, Box<List<T>>),
 }
 
 impl <T> List<T> {
 
     pub fn new() -> Self {
-        List { head: None, size: 0 }
+        List::Nothing
     }
 
-    pub fn push(&mut self, elem: T) {
-        self.head = Some(Box::new( 
-            match mem::replace(&mut self.head, None) {
-                None => Node::Leaf(elem),
-                Some(x) => Node::Branch(elem, x)
-        }));
-        self.size = self.size + 1;
-    }
+    // pub fn push(&mut self, data: T) -> List<T> {
+    //     List::Cons(Box::new(data), Box::new(match &self))
+    // }
 
-    pub fn pop(&mut self) -> Option<T> {
-        match mem::replace(&mut self.head, None) {
-            None => None,
-            Some(x) => {
-                self.size = self.size - 1;
-                match *x {
-                    Node::Leaf(data) => Some(data),
-                    Node::Branch(data, next) => {
-                        self.head = Some(next);
-                        Some(data)
-                    }
-                }
-            }
+    // pub fn peek(&self) -> Option<&T> {
+    //     match &self {
+    //         List::Nothing => None,
+    //         List::Cons(data, next) => Some(&data)
+    //     }
+    // }
+
+    pub fn size(&self) -> i32 {
+        match &self {
+            List::Nothing => 0,
+            List::Cons(data, next) => 1 + next.size()
         }
-    }
-
-    pub fn peek(&mut self) -> Option<&T> {
-        match &self.head {
-            None => None,
-            Some(x) => match &**x {
-                Node::Leaf(data) => Some(&data),
-                Node::Branch(data, next) => Some(&data)
-            } 
-        }
-    }
-
-    pub fn size(&mut self) -> i32 {
-        self.size
     }
 
 }
@@ -76,30 +51,34 @@ mod test {
     fn basics() {
         let mut list = List::<i32>::new();
 
-        assert_eq!(list.pop(), None);
-        assert_eq!(list.peek(), None);
+        // assert_eq!(None, match &list {
+        //     Nothing => None,
+        //     List::Cons(data, next) => Some(data)
+        // });
+        // assert_eq!(list.peek(), None);
         assert_eq!(list.size(), 0);
 
-        list.push(1);
-        list.push(2);
-        list.push(3);
-        assert_eq!(list.size(), 3);
+        // list = List::Cons(1, Box::new(list));
+        // list = List::Cons(2, Box::new(list));
+        // list = List::Cons(3, Box::new(list));
 
-        assert_eq!(list.peek(), Some(&3));
-        assert_eq!(list.pop(), Some(3));
-        assert_eq!(list.pop(), Some(2));
-        assert_eq!(list.size(), 1);
+        // assert_eq!(list.size(), 3);
 
-        list.push(4);
-        list.push(5);
-        assert_eq!(list.size(), 3);
+        // assert_eq!(list.peek(), Some(&3));
+        // assert_eq!(list.pop(), Some(3));
+        // assert_eq!(list.pop(), Some(2));
+        // assert_eq!(list.size(), 1);
 
-        assert_eq!(list.peek(), Some(&5));
-        assert_eq!(list.pop(), Some(5));
-        assert_eq!(list.pop(), Some(4));
-        assert_eq!(list.pop(), Some(1));
-        assert_eq!(list.pop(), None);
-        assert_eq!(list.size(), 0);
+        // list.push(4);
+        // list.push(5);
+        // assert_eq!(list.size(), 3);
+
+        // assert_eq!(list.peek(), Some(&5));
+        // assert_eq!(list.pop(), Some(5));
+        // assert_eq!(list.pop(), Some(4));
+        // assert_eq!(list.pop(), Some(1));
+        // assert_eq!(list.pop(), None);
+        // assert_eq!(list.size(), 0);
 
     }
 }
