@@ -6,40 +6,50 @@ pub struct List<T> {
 }
 
 pub enum Node<T> {
-    leaf(T), 
-    branch(T, Box<Node<T>>),
+    Leaf(T), 
+    Branch(T, Box<Node<T>>),
 }
 
 impl <T> List<T> {
-    use Node::branch;
+
     pub fn new() -> Self {
         List { head: None, size: 0 }
     }
 
     pub fn push(&mut self, elem: T) {
-        // TODO properly handle the case where
-        let new_node = branch(elem, mem::replace(&mut self.head, None));
-        self.head = Some(new_node);
+        self.head = Some(Box::new( 
+            match mem::replace(&mut self.head, None) {
+                None => Node::Leaf(elem),
+                Some(x) => Node::Branch(elem, x)
+        }));
         self.size = self.size + 1;
     }
 
-    // pub fn pop(&mut self) -> Option<T> {
-    //     match mem::replace(&mut self.head, None) {
-    //         None => None,
-    //         Some(x) => {
-    //             self.head = x.next;
-    //             self.size = self.size - 1;
-    //             Some(x.elem)
-    //         }
-    //     }
-    // }
+    pub fn pop(&mut self) -> Option<T> {
+        match mem::replace(&mut self.head, None) {
+            None => None,
+            Some(x) => {
+                self.size = self.size - 1;
+                match *x {
+                    Node::Leaf(data) => Some(data),
+                    Node::Branch(data, next) => {
+                        self.head = Some(next);
+                        Some(data)
+                    }
+                }
+            }
+        }
+    }
 
-    // pub fn peek(&mut self) -> Option<&T> {
-    //     match &self.head {
-    //         None => None,
-    //         Some(x) => Some(&x.elem)
-    //     }
-    // }
+    pub fn peek(&mut self) -> Option<&T> {
+        match &self.head {
+            None => None,
+            Some(x) => match &**x {
+                Node::Leaf(data) => Some(&data),
+                Node::Branch(data, next) => Some(&data)
+            } 
+        }
+    }
 
     pub fn size(&mut self) -> i32 {
         self.size
@@ -52,7 +62,7 @@ impl <T> List<T> {
 //         let mut cur_link = mem::replace(&mut self.head, None);
 
 //         while let Some(mut boxed_node) = cur_link {
-//             cur_link = mem::replace(&mut boxed_node.next, None);
+//             cur_link = match mem::replace(&mut boxed_node.next, None);
 //         }
 //     }
 // }
@@ -66,8 +76,8 @@ mod test {
     fn basics() {
         let mut list = List::<i32>::new();
 
-        // assert_eq!(list.pop(), None);
-        // assert_eq!(list.peek(), None);
+        assert_eq!(list.pop(), None);
+        assert_eq!(list.peek(), None);
         assert_eq!(list.size(), 0);
 
         list.push(1);
@@ -75,21 +85,21 @@ mod test {
         list.push(3);
         assert_eq!(list.size(), 3);
 
-        // assert_eq!(list.peek(), Some(&3));
-        // assert_eq!(list.pop(), Some(3));
-        // assert_eq!(list.pop(), Some(2));
-        // assert_eq!(list.size(), 1);
+        assert_eq!(list.peek(), Some(&3));
+        assert_eq!(list.pop(), Some(3));
+        assert_eq!(list.pop(), Some(2));
+        assert_eq!(list.size(), 1);
 
-        // list.push(4);
-        // list.push(5);
-        // assert_eq!(list.size(), 3);
+        list.push(4);
+        list.push(5);
+        assert_eq!(list.size(), 3);
 
-        // assert_eq!(list.peek(), Some(&5));
-        // assert_eq!(list.pop(), Some(5));
-        // assert_eq!(list.pop(), Some(4));
-        // assert_eq!(list.pop(), Some(1));
-        // assert_eq!(list.pop(), None);
-        // assert_eq!(list.size(), 0);
+        assert_eq!(list.peek(), Some(&5));
+        assert_eq!(list.pop(), Some(5));
+        assert_eq!(list.pop(), Some(4));
+        assert_eq!(list.pop(), Some(1));
+        assert_eq!(list.pop(), None);
+        assert_eq!(list.size(), 0);
 
     }
 }
