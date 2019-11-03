@@ -1,38 +1,32 @@
-use std::mem;
-
-type Link = Option<Box<Node>>;
+// use std::mem;
 
 pub struct BST {
-    head: Link,
+    head: Box<Node>,
 }
 
-struct Node {
-    elem: i32,
-    left: Link,
-    right: Link,
+enum Node {
+    Nil,
+    Branch(i32, Box<Node>, Box<Node>)
 }
+
+
 
 impl BST {
     pub fn new() -> Self {
-        BST { head: None }
+        BST { head: Box::new(Node::Nil) }
     }
 
-    // pub fn insert(&mut self, elem: i32) -> bool {
-    //     let new_node = Box::new(Node {
-    //         elem: elem, 
-    //         left: None, 
-    //         right: None,
-    //     });
-    //     match &mut self.head {
-    //         None => {
-    //             mem::replace(&mut self.head, Some(new_node));
-    //             true
-    //         }
-    //         Some(x) => self.recursive_insert(self.head, Some(new_node)),
-    //     }
-    // }
+    pub fn insert(&mut self, data: i32) -> bool {
+        match &mut *self.head {
+            Node::Nil => {
+                *self.head = Node::Branch(data, Box::new(Node::Nil), Box::new(Node::Nil));
+                true
+            }
+            Node::Branch(_,_,_) => BST::recursive_insert(&mut self.head, data)
+        }
+    }
 
-    fn recursive_insert(&self, cur_head: Link, new_node: Link) -> bool {
+    fn recursive_insert(_cur_head: &mut Box<Node>, _data: i32) -> bool {
         false
     }
 
@@ -50,6 +44,7 @@ mod test {
     #[test]
     fn basics() {
         let mut bst = BST::new();
+        bst.insert(50);
 
         assert_eq!(true, true);
 

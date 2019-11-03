@@ -1,40 +1,47 @@
+use std::mem;
 
-pub enum List<T> {
+pub struct List<T> {
+    head: Box<Node<T>>,
+    size: i32,
+}
+
+enum Node<T> {
     Nil, 
-    Cons(Box<T>, Box<List<T>>),
+    Cons(T, Box<Node<T>>),
 }
 
 impl <T> List<T> {
-
     pub fn new() -> Self {
-        List::Nil
+        List { head: Box::new(Node::Nil), size: 0 }
     }
 
-    pub fn push(self, data: T) -> List<T> {
-        List::Cons(Box::new(data), Box::new(self))
+    pub fn push(&mut self, data: T)  {
+        let temp = mem::replace(&mut *self.head, Node::Nil);
+        *self.head = Node::Cons(data, Box::new(temp));
+        self.size = self.size + 1;
     }
 
     pub fn peek(&self) -> Option<&T> {
-        match &self {
-            List::Nil => None,
-            List::Cons(data, _) => Some(&data)
+        match &*self.head {
+            Node::Nil => None,
+            Node::Cons(data, _) => Some(&data)
         }
     }
 
-    pub fn pop(self) -> (List<T>, Option<T>) {
-        match self {
-            List::Nil => (List::Nil, None),
-            List::Cons(data, next) => (*next, Some(*data))
+    pub fn pop(&mut self) -> Option<T> {
+        match mem::replace(&mut *self.head, Node::Nil) {
+            Node::Nil => None, 
+            Node::Cons(data, next) => {
+                self.head = next;
+                self.size = self.size - 1;
+                Some(data)
+            }
         }
     }
 
     pub fn size(&self) -> i32 {
-        match &self {
-            List::Nil => 0,
-            List::Cons(_, next) => 1 + next.size()
-        }
+        self.size
     }
-
 }
 
 #[cfg(test)]
@@ -44,30 +51,31 @@ mod test {
     #[test]
     fn basics() {
         let mut list = List::<i32>::new();
+
+        assert_eq!(list.pop(), None);
         assert_eq!(list.peek(), None);
         assert_eq!(list.size(), 0);
 
-        list = list.push(1);
-        list = list.push(2);
-        list = list.push(3);
+        list.push(1);
+        list.push(2);
+        list.push(3);
         assert_eq!(list.size(), 3);
 
         assert_eq!(list.peek(), Some(&3));
+        assert_eq!(list.pop(), Some(3));
+        assert_eq!(list.pop(), Some(2));
+        assert_eq!(list.size(), 1);
 
-        let mut temp = list.pop(); assert_eq!(temp.1, Some(3));
-        temp = temp.0.pop(); assert_eq!(temp.1, Some(2));
-
-        list = temp.0.push(4);
-        list = list.push(5);
+        list.push(4);
+        list.push(5);
         assert_eq!(list.size(), 3);
 
         assert_eq!(list.peek(), Some(&5));
-        temp = list.pop(); assert_eq!(temp.1, Some(5));
-        temp = temp.0.pop(); assert_eq!(temp.1, Some(4));
-        temp = temp.0.pop(); assert_eq!(temp.1, Some(1));
-        temp = temp.0.pop(); assert_eq!(temp.1, None);
-
-        assert_eq!(temp.0.size(), 0);
+        assert_eq!(list.pop(), Some(5));
+        assert_eq!(list.pop(), Some(4));
+        assert_eq!(list.pop(), Some(1));
+        assert_eq!(list.pop(), None);
+        assert_eq!(list.size(), 0);
 
     }
 }
