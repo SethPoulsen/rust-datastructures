@@ -9,8 +9,6 @@ enum Node {
     Branch(i32, Box<Node>, Box<Node>)
 }
 
-
-
 impl BST {
     pub fn new() -> Self {
         BST { head: Box::new(Node::Nil) }
@@ -30,9 +28,9 @@ impl BST {
         false
     }
 
-    // pub fn get(elem: i32) -> Option<&i32> {
-        
-    // }
+    pub fn contains(&self, _data: i32) -> bool {
+        false
+    }
 
 }
 
